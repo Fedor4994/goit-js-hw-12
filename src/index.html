@@ -7,7 +7,20 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <div class="wrap">Hello world</div>
+    <form class="search-form" id="search-form">
+      <input
+        type="text"
+        name="searchQuery"
+        autocomplete="off"
+        placeholder="Search images..."
+        class="search-input"
+      />
+      <button class="search-btn" type="submit">🔍︎</button>
+    </form>
+    <div class="gallery-wrapper"></div>
+    <div class="wraper">
+      <button type="button" class="load-more is-hidden">LOAD MORE</button>
+    </div>
     <script src="index.js" type="module"></script>
   </body>
 </html>
