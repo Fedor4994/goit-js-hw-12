@@ -10,6 +10,7 @@ let inputValue = '';
 const gallery = document.querySelector('.gallery-wrapper');
 const loadMoreBtn = document.querySelector('.load-more');
 const formEl = document.querySelector('#search-form');
+
 formEl.addEventListener('submit', onFormSubmit);
 loadMoreBtn.addEventListener('click', onLoadMore);
 
@@ -27,17 +28,20 @@ function onFormSubmit(event) {
         onEmptyRequest();
         return;
       }
+
       if (page > data.totalHits / 40) {
         loadMoreBtn.classList.add('is-hidden');
         Notiflix.Notify.warning('Картинки на эту тему закончились');
         renderPictures(data.hits);
         return;
       }
+
       Notiflix.Notify.success(
         `Успех! На эту тему найдено ${data.totalHits} картинок`
       );
       renderPictures(data.hits);
       loadMoreBtn.classList.remove('is-hidden');
+
       page += 1;
     })
     .catch(error => {
@@ -48,7 +52,7 @@ function onFormSubmit(event) {
 function renderPictures(pictures) {
   const murkup = pictures.map(picture => {
     return `<div class="gallery">
-      <a href="${picture.largeImageURL}">
+      <a class="gallery__item" href="${picture.largeImageURL}">
         <img
           class="gallery-image"
           src="${picture.webformatURL}"
@@ -76,6 +80,7 @@ function renderPictures(pictures) {
     </div>`;
   });
   gallery.insertAdjacentHTML('beforeend', murkup);
+  let lightbox = new SimpleLightbox('.gallery a');
 }
 
 function onEmptyRequest() {
@@ -90,19 +95,22 @@ function onLoadMore() {
         loadMoreBtn.classList.add('is-hidden');
         Notiflix.Notify.warning('Картинки на эту тему закончились');
       }
+
       renderPictures(data.hits);
       page += 1;
+      addAutoScroll();
     })
     .catch(error => {
       console.log(error);
     });
 }
 
-let lightbox = new SimpleLightbox('.gallery a');
-// const options = {
-//   method: 'POST',
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-//   body: JSON.stringify(newBook),
-// };
+function addAutoScroll() {
+  const { height: cardHeight } =
+    gallery.firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+}
