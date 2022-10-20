@@ -50,8 +50,9 @@ function onFormSubmit(event) {
 }
 
 function renderPictures(pictures) {
-  const murkup = pictures.map(picture => {
-    return `<div class="gallery">
+  const murkup = pictures
+    .map(picture => {
+      return `<div class="gallery">
       <a class="gallery__item" href="${picture.largeImageURL}">
         <img
           class="gallery-image"
@@ -78,7 +79,8 @@ function renderPictures(pictures) {
         </p>
       </div>
     </div>`;
-  });
+    })
+    .join('');
   gallery.insertAdjacentHTML('beforeend', murkup);
   let lightbox = new SimpleLightbox('.gallery a');
 }
