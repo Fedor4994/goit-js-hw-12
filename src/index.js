@@ -14,7 +14,7 @@ const formEl = document.querySelector('#search-form');
 formEl.addEventListener('submit', onFormSubmit);
 loadMoreBtn.addEventListener('click', onLoadMore);
 
-function onFormSubmit(event) {
+async function onFormSubmit(event) {
   event.preventDefault();
   gallery.innerHTML = '';
   loadMoreBtn.classList.add('is-hidden');
@@ -22,31 +22,33 @@ function onFormSubmit(event) {
 
   inputValue = event.target.elements.searchQuery.value;
 
-  fetchPictures(inputValue, key, page)
-    .then(data => {
-      if (data.hits.length === 0) {
-        onEmptyRequest();
-        return;
-      }
+  try {
+    const data = await fetchPictures(inputValue, key, page);
 
-      if (page > data.totalHits / 40) {
-        loadMoreBtn.classList.add('is-hidden');
-        Notiflix.Notify.warning('Картинки на эту тему закончились');
-        renderPictures(data.hits);
-        return;
-      }
+    if (data.hits.length === 0) {
+      onEmptyRequest();
+      return;
+    }
 
-      Notiflix.Notify.success(
-        `Успех! На эту тему найдено ${data.totalHits} картинок`
-      );
+    if (page > data.totalHits / 40) {
+      loadMoreBtn.classList.add('is-hidden');
+      Notiflix.Notify.warning('Картинки на эту тему закончились');
       renderPictures(data.hits);
-      loadMoreBtn.classList.remove('is-hidden');
+      return;
+    }
 
-      page += 1;
-    })
-    .catch(error => {
-      console.log(error);
-    });
+    Notiflix.Notify.success(
+      `Успех! На эту тему найдено ${data.totalHits} картинок`
+    );
+
+    renderPictures(data.hits);
+
+    loadMoreBtn.classList.remove('is-hidden');
+
+    page += 1;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function renderPictures(pictures) {
@@ -90,21 +92,19 @@ function onEmptyRequest() {
   Notiflix.Notify.failure('Нет картинок по такому запросу');
 }
 
-function onLoadMore() {
-  fetchPictures(inputValue, key, page)
-    .then(data => {
-      if (page > data.totalHits / 40) {
-        loadMoreBtn.classList.add('is-hidden');
-        Notiflix.Notify.warning('Картинки на эту тему закончились');
-      }
-
-      renderPictures(data.hits);
-      page += 1;
-      addAutoScroll();
-    })
-    .catch(error => {
-      console.log(error);
-    });
+async function onLoadMore() {
+  const data = await fetchPictures(inputValue, key, page);
+  try {
+    if (page > data.totalHits / 40) {
+      loadMoreBtn.classList.add('is-hidden');
+      Notiflix.Notify.warning('Картинки на эту тему закончились');
+    }
+    renderPictures(data.hits);
+    page += 1;
+    addAutoScroll();
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function addAutoScroll() {
