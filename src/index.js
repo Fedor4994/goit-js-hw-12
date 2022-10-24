@@ -14,6 +14,8 @@ const formEl = document.querySelector('#search-form');
 formEl.addEventListener('submit', onFormSubmit);
 loadMoreBtn.addEventListener('click', onLoadMore);
 
+let lightbox = new SimpleLightbox('.gallery a');
+
 async function onFormSubmit(event) {
   event.preventDefault();
   gallery.innerHTML = '';
@@ -84,7 +86,8 @@ function renderPictures(pictures) {
     })
     .join('');
   gallery.insertAdjacentHTML('beforeend', murkup);
-  let lightbox = new SimpleLightbox('.gallery a');
+
+  lightbox.refresh();
 }
 
 function onEmptyRequest() {
